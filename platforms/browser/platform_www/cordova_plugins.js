@@ -447,7 +447,8 @@ module.exports.metadata =
     "cordova-plugin-vibration": "2.1.6",
     "cordova-plugin-buildinfo": "2.0.2",
     "cordova-universal-links-plugin": "1.2.1",
-    "cordova-plugin-browsertab": "0.2.0"
+    "cordova-plugin-browsertab": "0.2.0",
+    "cordova-plugin-whitelist": "1.3.3"
 }
 // BOTTOM OF METADATA
 });

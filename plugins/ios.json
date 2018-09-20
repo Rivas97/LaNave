@@ -51,6 +51,9 @@
     },
     "cordova-universal-links-plugin": {
       "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "Nave"
     }
   },
   "dependent_plugins": {

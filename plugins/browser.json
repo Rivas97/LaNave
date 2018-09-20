@@ -45,6 +45,9 @@
     },
     "cordova-plugin-browsertab": {
       "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "Nave"
     }
   },
   "dependent_plugins": {
