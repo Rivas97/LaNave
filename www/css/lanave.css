@@ -1,0 +1,89 @@
+
+.login {
+	display: none;
+	padding-left: 15px;
+}
+
+.signin {
+	display: none;
+	padding-left: 15px;
+}
+
+.entrar {
+	text-align: center;
+}
+
+.horarios {
+	display: none;
+}
+
+#noVerified{
+	display: none;
+}
+
+.grupo {
+	display: none;
+	padding-left: 5%;
+}
+.salir {
+	display: none;
+}
+
+#logout {
+	float: right;
+}
+
+#forgot{
+	margin-right: 10px;
+}
+
+.tabla {
+	display: none;
+}
+
+.tabla1 {
+	display: none;
+}
+
+
+
+.tabla2 {
+	display: none;
+}
+
+.brand-logo {
+	font-size: 25px!important;
+	padding-left: 5%!important;
+}
+
+#bienvenido {
+	text-align: center;
+
+}
+
+.volver{
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.pasar{
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+
+.brand-logo{
+	margin-left: 70px;
+}
+
+.nav-wrapper {
+	background: linear-gradient(to right, red, blue);
+	text-align: center;
+}
+
+.nav-content {
+	background: linear-gradient(to right, red, blue);
+}
+
+.collection-item{
+	display: none;
+}

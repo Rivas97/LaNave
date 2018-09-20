@@ -1,0 +1,64 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-battery-status": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-browsertab": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-buildinfo": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-camera": {
+      "CAMERA_USAGE_DESCRIPTION": " ",
+      "PHOTOLIBRARY_USAGE_DESCRIPTION": " ",
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-dialogs": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-geolocation": {
+      "GEOLOCATION_USAGE_DESCRIPTION": " ",
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-globalization": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-inappbrowser": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-media-capture": {
+      "CAMERA_USAGE_DESCRIPTION": " ",
+      "MICROPHONE_USAGE_DESCRIPTION": " ",
+      "PHOTOLIBRARY_USAGE_DESCRIPTION": " ",
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-vibration": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-universal-links-plugin": {
+      "PACKAGE_NAME": "Nave"
+    }
+  },
+  "dependent_plugins": {
+    "cordova-plugin-compat": {
+      "PACKAGE_NAME": "Nave"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "Nave"
+    }
+  }
+}

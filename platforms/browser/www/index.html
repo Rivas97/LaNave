@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' gap:; style-src 'self' 'unsafe-inline'; media-src *" />
+    <link rel="stylesheet" type="text/css" href="css/materialize.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/lanave.css" />
+    <title>La Nave</title>
+</head>
+
+<body>
+<body>
+  <nav class="nav-extended red lighten-1">
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo left">La Nave Training</a>
+    </div>
+    <div class="nav-content">
+      <ul class="tabs tabs-transparent">
+        <li class="tab"><a class="active" href="#test1" id="cuenta">Cuenta</a></li>
+        <li class="tab"><a class="active" href="#test2"id="ver">Horarios</a></li>
+        <li class="tab"><a class="active" href="#test3" id="out">Salir</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+   <div class="login" id="login">
+      <h2 class = "registro">  </h2>
+       <div class="input-field col s6">
+          <input id="email" type="text" class="validate">
+          <label for="email">Correo electrónico</label>
+        </div>
+      <br>
+        <div class="input-field col s12">
+          <input id="password" type="password" class="validate">
+          <label for="password">Contraseña</label>
+        </div>
+      <a href="javascript:null()" id ="sign" title = ""> Registrarse </a>
+      <a href="javascript:null()" id ="forgot" title = "" class="right"> ¿Ha olvidado su contraseña?</a>
+      <br>
+      <br>
+      <div class="entrar">
+      <a class="waves-effect waves-light btn-small entrar indigo accent-4" id ="entrar">Entrar</a>
+  	  </div>
+   </div>
+
+   <div class="signin" id="signin">
+   	   <div class="input-field col s6">
+         <input id="newmail" type="text" class="validate">
+         <label for="newmail">Correo electrónico</label>
+       </div>
+      <br>
+       <div class="input-field col s12">
+         <input id="name" type="text" class="validate">
+         <label for="name">Nombre</label>
+       </div>
+       <br>
+        <div class="input-field col s6">
+          <input id="newpass" type="password" class="validate">
+          <label for="newpass">Contraseña</label>
+        </div>
+      <br>
+        <div class="input-field col s12">
+          <input id="confpass" type="password" class="validate">
+          <label for="confpass">Confirma Contraseña</label>
+        </div>
+      <br>
+        <div class="entrar">
+      		<a class="waves-effect waves-light btn-small indigo accent-4 left" id ="register">Registarse</a>
+  	  	</div>
+  	  	<div class="entrar">
+      		<a class="waves-effect waves-light btn-small indigo accent-4 right volver" id ="atras">Volver</a>
+  	  	</div>
+   </div>
+
+   <div id="noVerified" class="signin">
+   	<h5>Su correo electrónico aún no ha sido verificado</h5>
+   	<p> Si no ha recibido el correo de verificación, mire en la carpeta de no correo no deseado.
+   	Si aún así no lo ha recibido, contacte con el administrador</p>
+
+   	<div class="entrar">
+      	<a class="waves-effect waves-light btn-small indigo accent-4 entrar" id ="refresh">Volver</a>
+  	</div>
+
+   </div>
+
+   <div class="horarios" id="horarios">
+      <h5 id="bienvenido"></h5>
+      	<div class="collection">
+		    <a href="javascript:null()" class="collection-item" id="dia1"></a>
+		    <a href="javascript:null()" class="collection-item" id="dia2"></a>
+		    <a href="javascript:null()" class="collection-item" id="dia3"></a>
+		    <a href="javascript:null()" class="collection-item" id="dia4"></a>
+		    <a href="javascript:null()" class="collection-item" id="dia5"></a>
+  		</div>
+   </div>
+
+   <div class="grupo" id="grupo">
+   <h5 id = "hora"></h5>
+   <p id = "pert"></p>
+   <p id ="plazas"></p>
+   <p id ="mens"></p>
+   <br>
+   
+	<a class="waves-effect waves-light blue btn" id="add">Añadirme a este grupo</a>
+   <br>
+   <br>
+   <a class="waves-effect waves-light blue btn" id="salir">Salir de este grupo</a>
+   <br>
+   <br>
+	<a class="waves-effect waves-light blue btn" id="volver">Volver</a>
+   </div>
+
+
+	<div class="tabla" id = "tabla">
+	<table class="table1 striped">
+	<tbody>
+	<tr>
+	<td>&nbsp; </td>
+	<td><strong> &nbsp; &nbsp;   Lunes </strong></td>
+	<td><strong> &nbsp; &nbsp;  Martes </strong></td>
+	<td><strong> &nbsp; &nbsp;  Miércoles </strong></td>
+	<td><strong> &nbsp; &nbsp;  Jueves </strong></td>
+	</tr>
+	<tr>
+	<td><strong> 08:00 </strong></td>
+	<td onclick ="app.tabla('L(08:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(08:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(08:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(08:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 09:00</strong></td>
+	<td onclick ="app.tabla('L(09:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(09:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(09:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(09:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 10:00 </strong></td>
+	<td onclick ="app.tabla('L(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(10:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 11:00 </strong></td>
+	<td onclick ="app.tabla('L(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(10:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 12:00 </strong></td>
+	<td onclick ="app.tabla('L(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(10:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 13:00 </strong></td>
+	<td onclick ="app.tabla('L(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(10:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	</tr>
+	<tr>
+	<td><strong> 16:00 </strong></td>
+	<td onclick ="app.tabla('L(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(10:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(10:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 17:00 </strong></td>
+	<td onclick ="app.tabla('L(17:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(17:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(17:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(17:00)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 18:00 </strong></td>
+	<td onclick ="app.tabla('L(18:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(18:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(18:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(18:00)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 19:00 </strong></td>
+	<td onclick ="app.tabla('L(19:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(19:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(19:00)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(19:00)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 20:00 </strong></td>
+	<td onclick ="app.tabla('L(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('M(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('X(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 21:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	</tbody>
+	</table>
+
+	<a class="waves-effect waves-light btn right blue volver" id="back">Volver</a>
+
+	</div>
+
+	<div class="tabla1" id = "tabla1">
+
+	<table class="table1 striped">
+	<tbody>
+	<tr>
+	<td>&nbsp; </td>
+	<td><strong>   Lunes </strong></td>
+	<td><strong>	Martes </strong></td>
+	<td><strong>  Miércoles </strong></td>
+	</tr>
+	<tr>
+	<td><strong> 8:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 9:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 10:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	</tr>
+	<tr>
+	<td><strong> 17:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 18:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 19:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 20:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 21:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	</tbody>
+	</table>
+
+	<br>
+
+	<a class="waves-effect waves-light btn right blue volver" onclick="app.volver();">Volver</a>
+	<a class="waves-effect waves-light btn left blue pasar" onclick="app.siguiente();">Siguiente</a>
+
+	</div>
+
+	<div class="tabla2" id = "tabla2">
+	<table class="table1 striped">
+	<tbody>
+	<tr>
+	<td>&nbsp; </td>
+	<td><strong>  Jueves </strong></td>
+	<td><strong>   Viernes </strong></td>
+	</tr>
+	<tr>
+	<td><strong> 8:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 9:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 10:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	</tr>
+	<tr>
+	<td><strong> 17:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 18:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 19:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 20:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	<tr>
+	<td><strong> 21:00 </strong></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	<td onclick ="app.tabla('J(20:30)')"><a href="javascript:null()">hora</a></td>
+	</tr>
+	</tbody>
+	</table>
+	<br>
+
+	<a class="waves-effect waves-light btn right blue volver" onclick="app.volver();">Volver</a>
+	<a class="waves-effect waves-light btn left blue pasar" onclick="app.anterior();">Anterior</a>
+
+
+	</div> 
+
+	<div id="exit" class="salir">
+		<h5> ¿Está seguro de que quiere salir?	
+		<br>
+		<br>
+
+		<a class="waves-effect waves-light btn right blue volver" onclick="app.volver();">Volver</a>
+		<a class="waves-effect waves-light btn left blue pasar" id = "logout">Salir</a>
+	</div>
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase.js"></script>
+    <script type="text/javascript">
+        //app.initialize();
+    </script>
+
+</body>
+
+</html>
