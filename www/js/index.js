@@ -3,6 +3,7 @@ var app = {
   inicio: function() {
 
     this.iniciaBotones();
+    this.iniciaHeader();
 
     var config = {
         apiKey: "AIzaSyDMHf0OfkaNIdtfFdAwHnJjzfEqbEs-TYk",
@@ -52,11 +53,6 @@ var app = {
     var dia4 = document.querySelector('#dia4');
     dia4.addEventListener('click', function(){app.grupo('dia4');},false);
 
-    var volver = document.querySelector("#volver");
-    volver.addEventListener('click', this.volver, false);
-
-    var back = document.querySelector("#back");
-    back.addEventListener('click', this.volver, false);
 
     var add = document.querySelector("#add");
     add.addEventListener('click', this.add, false);
@@ -99,6 +95,18 @@ var app = {
     var refresh = document.querySelector("#refresh");
     refresh.addEventListener('click', this.backlogin, false);
 
+  },
+
+  iniciaHeader: function(){
+        var ancho = document.documentElement.clientWidth;
+
+        if (ancho <= 500) {
+            document.getElementById("small-header").style.display = "block";
+            document.getElementById("big-header").style.display="none";
+        }else{
+            document.getElementById("small-header").style.display = "none";
+            document.getElementById("big-header").style.display="block";
+        }
   },
 
   login: function() {
@@ -195,7 +203,7 @@ var app = {
         document.getElementById("tabla").style.display = "none";
         document.getElementById("tabla1").style.display = "none";
         document.getElementById("tabla1").style.display = "none";
-        document.getElementById('tabla2').style.display ='none';
+        document.getElementById('tablaAdmin').style.display ='none';
   },
 
   horario: function() {
@@ -210,7 +218,7 @@ var app = {
         document.getElementById("tabla").style.display = "none";
         document.getElementById("tabla1").style.display = "none";
         document.getElementById("tabla1").style.display = "none";
-        document.getElementById('tabla2').style.display ='none';
+        document.getElementById('tablaAdmin').style.display ='none';
 
     } else{
         document.getElementById("bienvenido").innerHTML="Bienvenid@ " + user.displayName ;
@@ -272,69 +280,9 @@ var app = {
         document.getElementById("tabla").style.display = "none";
         document.getElementById("tabla1").style.display = "none";
         document.getElementById("tabla1").style.display = "none";
-        document.getElementById('tabla2').style.display ='none';
+        document.getElementById('tablaAdmin').style.display ='none';
     }
-    /*var peticion = 'http://pilatesmanzaneque.es/login.php?user=' + user +'&password=' + password;
-
-
-      $.getJSON(peticion,function(data){
-          console.log(JSON.stringify(data));
-
-          $(data).each(function(index, data) {
-              if (data.usuario){
-                document.getElementById("bienvenido").innerHTML = "Hola " +data.nombre + " " + data.apellido;
-
-                if(data.diahora1 =="") {
-                  document.getElementById("dia1").style.display = "none";
-                } else{
-                  document.getElementById("dia1").style.display = "block";
-                }
-                document.getElementById("dia1").innerHTML = app.dia(data.diahora1);
-                document.getElementById("dia1").title = app.link(data.diahora1,user);
-
-                if(data.diahora2 =="") {
-                  document.getElementById("dia2").style.display = "none";
-                } else{
-                  document.getElementById("dia2").style.display = "block";
-                }
-                document.getElementById("dia2").innerHTML = app.dia(data.diahora2);
-                document.getElementById("dia2").title = app.link(data.diahora2,user);
-
-
-                if(data.diahora3 =="") {
-                  document.getElementById("dia3").style.display = "none";
-                } else{
-                  document.getElementById("dia3").style.display = "block";
-                }
-                document.getElementById("dia3").innerHTML = app.dia(data.diahora3);
-                document.getElementById("dia3").title = app.link(data.diahora3,user);
-
-
-                if(data.diahora4 =="") {
-                  document.getElementById("dia4").style.display = "none";
-                } else{
-                  document.getElementById("dia4").style.display = "block";
-                }
-                document.getElementById("dia4").innerHTML = app.dia(data.diahora4);
-                document.getElementById("dia4").title = app.link(data.diahora4,user);
-
-                document.getElementById("login").style.display = "none";
-                document.getElementById("grupo").style.display = "none";
-                document.getElementById("horarios").style.display = "block";
-                document.getElementById("exit").style.display = "none";
-                document.getElementById("tabla").style.display = "none";
-                document.getElementById("tabla1").style.display = "none";
-                document.getElementById("tabla1").style.display = "none";
-                document.getElementById('tabla2').style.display ='none';
-
-              } else{
-                window.localStorage.clear();
-                alert("Usuario o contraseña incorrectos");
-                document.getElementById("password").value = "";
-              }
-
-          });
-      });*/
+    
   },
 
 
@@ -399,7 +347,7 @@ var app = {
     document.getElementById("exit").style.display = "none";
     document.getElementById("tabla").style.display = "none";
     document.getElementById("tabla1").style.display = "none";
-    document.getElementById('tabla2').style.display ='none';
+    document.getElementById('tablaAdmin').style.display ='none';
   },
 
   volver: function(){
@@ -429,7 +377,50 @@ var app = {
    },
 
    add: function() {
-    var user = window.localStorage.getItem("user");
+    var user = firebase.auth().currentUser;
+    var plazas = 0;
+    var raw = document.getElementById("hora").innerHTML;
+    var hour = app.diahora(raw);
+    var dia = app.day(hour);
+    var hora = app.hora(hour);
+    var horarios;
+
+
+        firebase.database().ref('/usuarios/' + user.displayName +'/horarios').once('value').then(function(snapshot){
+            horarios = snapshot.val();
+            if(horarios[4] == ""){
+                for(var i =0; i < 5; i++){
+                    if(horarios[i] == "") {
+                        horarios[i] = hour;
+                        break;
+                    }
+                }
+
+                firebase.database().ref('/usuarios/' + user.displayName ).update({
+                    horarios: horarios
+                 });
+
+                firebase.database().ref('/horarios/'+ dia +'/' + hora + '/plazas').once('value').then(function(snapshot){
+                    plazas = snapshot.val();
+
+                    plazas++;
+                 firebase.database().ref('/horarios/' + dia + '/' + hora).update({
+                        plazas: plazas
+                    }); 
+
+                        alert("Ha sido añadido al grupo");
+
+                        app.tabla(hour);  
+                });
+
+
+
+            }else {
+                alert("Ya asiste al número máximo de clases por semana");
+            }
+        });
+
+    /*var user = window.localStorage.getItem("user");
     var raw = document.getElementById("hora").innerHTML;
     var hour = app.diahora(raw);
 
@@ -452,7 +443,7 @@ var app = {
 
 
         });
-    });
+    });*/
    },
 
    salir: function() {
@@ -509,7 +500,90 @@ var app = {
 
    },
 
+   day: function(horario){
+        var n = horario.length;
+        var start = n-7;
+
+        var day = horario.substring(0,start);
+
+
+        if (day == "L") {
+            var dia = "Lunes";
+          } else if(day == "M") {
+            var dia = "Martes";
+          } else if(day == "X") {
+            var dia = "Miercoles";
+          } else if(day == "J"){
+            var dia = "Jueves";
+          } else if(day == "V"){
+            var dia = "Viernes"
+          }else {
+            var dia = "";
+          }
+
+          return dia;
+   },
+
+   hora:function(horario){
+        var n = horario.length;
+
+        var begin = n-6;
+
+        var hour = horario.substring(begin,n-1);
+
+        return hour;
+   },
+
    tabla: function(hora) {
+
+    var user = firebase.auth().currentUser;
+    var userTime;
+    var plazas;
+    var dia = this.day(hora);
+    var hour = this.hora(hora);
+    var pert = false;
+
+    document.getElementById("hora").innerHTML= dia + " " + hour;
+
+    firebase.database().ref('/horarios/' + dia +'/'+ hour +'/plazas').on('value', function(snapshot){
+        plazas = 10 - snapshot.val();
+        document.getElementById("plazas").innerHTML =  "Quedan " + plazas + " plazas";
+
+
+        if (plazas <= 0 ) {
+            document.getElementById("add").style.visibility = "hidden";
+        } else{ 
+            document.getElementById("add").style.visibility = "visible";
+        }
+    });
+
+    firebase.database().ref('/usuarios/' + user.displayName +'/horarios').on('value', function(snapshot){
+        for(var i = 0; i < 5; i++){
+            if (snapshot.val()[i] == hora){
+                pert = true;
+            }
+        }
+
+        if (pert){
+            document.getElementById("pert").innerHTML = "Ya pertenece a este grupo";
+            document.getElementById("add").style.visibility = "hidden";
+            document.getElementById("salir").style.visibility = "visible";
+        } else {
+            document.getElementById("pert").innerHTML = "";
+            document.getElementById("add").style.visibility = "visible";
+            document.getElementById("salir").style.visibility = "hidden"
+        }
+    });
+
+
+
+
+    document.getElementById("horarios").style.display = "none";
+    document.getElementById("grupo").style.display = "block";
+    document.getElementById("exit").style.display = "none";
+    document.getElementById("tabla").style.display = "none";
+    document.getElementById("tabla1").style.display = "none";
+    document.getElementById('tablaAdmin').style.display ='none';
 
     /*var user = window.localStorage.getItem("user");
     var peticion = "http://pilatesmanzaneque.es/group.php?diahora=" + hora + "&user=" + user;
@@ -531,8 +605,8 @@ var app = {
 
           if (data.plazas <= 0 ) {
             document.getElementById("add").style.visibility = "hidden";
-          } else {
-            document.getElementById("add").style.visibility = "visible";
+          } else 
+            document.getElementById("add").style.visibility = "visible";{
           }
 
 
@@ -578,7 +652,7 @@ var app = {
             document.getElementById("tabla").style.display = "none";
             document.getElementById("tabla1").style.display = "none";
             document.getElementById("tabla1").style.display = "none";
-            document.getElementById('tabla2').style.display ='none';
+            document.getElementById('tablaAdmin').style.display ='none';
 
         } else{
             document.getElementById("bienvenido").innerHTML="Bienvenid@ " + user.displayName ;
@@ -640,7 +714,7 @@ var app = {
             document.getElementById("tabla").style.display = "none";
             document.getElementById("tabla1").style.display = "none";
             document.getElementById("tabla1").style.display = "none";
-            document.getElementById('tabla2').style.display ='none';
+            document.getElementById('tablaAdmin').style.display ='none';
         }
    },
 
@@ -655,7 +729,7 @@ var app = {
                 document.getElementById("tabla").style.display = "none";
                 document.getElementById("tabla1").style.display = "none";
                 document.getElementById("tabla1").style.display = "none";
-                document.getElementById('tabla2').style.display ='none';
+                document.getElementById('tablaAdmin').style.display ='none';
       } else {
         alert("No ha iniciado sesión");
       }
@@ -663,12 +737,12 @@ var app = {
 
    siguiente: function() {
       document.getElementById('tabla1').style.display ='none';
-      document.getElementById('tabla2').style.display ='block';
+      document.getElementById('tablaAdmin').style.display ='block';
    },
 
    anterior: function() {
     document.getElementById('tabla1').style.display ='block';
-    document.getElementById('tabla2').style.display ='none';
+    document.getElementById('tablaAdmin').style.display ='none';
    },
 
    /*rotacion: function () {

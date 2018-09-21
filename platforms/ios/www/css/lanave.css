@@ -39,21 +39,41 @@
 
 .tabla {
 	display: none;
+	font-size: 20px
 }
+
+
+
+
+.tabla td {
+	height: 7em;
+}
+
+.tabla1 td{
+	height: 5em;
+}
+
 
 .tabla1 {
 	display: none;
 }
 
-
-
-.tabla2 {
+.tablaAdmin {
 	display: none;
 }
 
 .brand-logo {
 	font-size: 25px!important;
+	
+}
+
+#small-header{
 	padding-left: 5%!important;
+}
+
+#big-header {
+	margin-left: -0.1%!important; 
+	display: none;
 }
 
 #bienvenido {
@@ -87,3 +107,4 @@
 .collection-item{
 	display: none;
 }
+

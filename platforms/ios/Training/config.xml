@@ -126,5 +126,6 @@
     <preference name="PaginationBreakingMode" value="page" />
     <preference name="PaginationMode" value="unpaginated" />
     <preference name="CameraUsesGeolocation" value="false" />
+    <preference name="orientation" value="portrait" />
     <preference name="android-minSdkVersion" value="14" />
 </widget>

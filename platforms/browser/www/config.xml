@@ -22,5 +22,6 @@
         </host>
     </universal-links>
     <preference name="DisallowOverscroll" value="true" />
+    <preference name="orientation" value="portrait" />
     <preference name="android-minSdkVersion" value="14" />
 </widget>
