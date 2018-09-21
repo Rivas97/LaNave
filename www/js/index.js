@@ -14,6 +14,8 @@ var app = {
          messagingSenderId: "160630566772"
     };
     firebase.initializeApp(config);
+    this.iniciaObserver();
+    this.iniciaAdmin();
 
 
     var email = window.localStorage.getItem("email");
@@ -36,6 +38,17 @@ var app = {
     }
   },
 
+  iniciaObserver: function() {
+    firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            document.getElementById("cuenta").innerHTML = "Cuenta";
+          } else {
+            document.getElementById("cuenta").innerHTML = "Inicio";
+          }
+        });
+
+  },
+
 
   iniciaBotones: function(){
     var entrar = document.querySelector('#entrar');
@@ -52,7 +65,6 @@ var app = {
 
     var dia4 = document.querySelector('#dia4');
     dia4.addEventListener('click', function(){app.grupo('dia4');},false);
-
 
     var add = document.querySelector("#add");
     add.addEventListener('click', this.add, false);
@@ -73,9 +85,7 @@ var app = {
     out.addEventListener('click', this.out, false);
 
     var forgot = document.querySelector("#forgot");
-    forgot.addEventListener('click', function(){
-      alert("Para recuperar su contraseña, entre en www.pilatesmanzaneque.es");
-    },false);
+    forgot.addEventListener('click', this.forgot,false);
 
     var sign = document.querySelector("#sign");
     sign.addEventListener('click',function(){
@@ -83,14 +93,11 @@ var app = {
         document.getElementById("signin").style.display = "block";
     }, false);
 
+    var recover = document.querySelector("#recover");
+    recover.addEventListener('click', this.recover,false);
+
     var register = document.querySelector("#register");
     register.addEventListener('click', this.register, false);
-
-    var atras = document.querySelector("#atras");
-    atras.addEventListener('click',function(){
-        document.getElementById("login").style.display = "block";
-        document.getElementById("signin").style.display = "none";
-    }, false);
 
     var refresh = document.querySelector("#refresh");
     refresh.addEventListener('click', this.backlogin, false);
@@ -120,10 +127,10 @@ var app = {
         window.localStorage.setItem("password",password);
 
         app.horario();
-    })
+
+      })
 
     .catch(function(error) {
-      // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
       alert(errorMessage);
@@ -141,7 +148,7 @@ var app = {
     firebase.database().ref('/usuarios').once('value').then(function(snapshot) {
       var users = snapshot.val()
       for (var i in users){
-        if(i = name){
+        if(i == name){
             repeat = true;
         }
       }
@@ -157,8 +164,9 @@ var app = {
             firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(function(){
                 firebase.database().ref('usuarios/' + name ).set({
-                    horarios: ["","","","",""],
-                    email: email
+                    horarios: ["","","",""],
+                    email: email,
+                    admin: false
                 });
 
                 var user = firebase.auth().currentUser;
@@ -193,9 +201,38 @@ var app = {
 
   },
 
+  forgot: function() {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("signin").style.display = "none";
+        document.getElementById("forgot-password").style.display = "block";
+        document.getElementById("grupo").style.display = "none";
+        document.getElementById("horarios").style.display = "none";
+        document.getElementById("noVerified").style.display = "none";
+        document.getElementById("exit").style.display = "none";
+        document.getElementById("tabla").style.display = "none";
+        document.getElementById("tabla1").style.display = "none";
+        document.getElementById("tabla1").style.display = "none";
+        document.getElementById('tablaAdmin').style.display ='none';
+  },
+
+  recover: function(){
+    var auth = firebase.auth();
+    var emailAddress = document.getElementById("forgot-mail").value;
+
+    auth.sendPasswordResetEmail(emailAddress).then(function() {
+        alert("Se ha enviado un email de recuperación de contraseña");
+        app.backlogin();
+    }).catch(function(error) {
+        alert("Ha ocurrido un error, por favor inténtelo de nuevo más tarde");
+        app.backlogin();
+    });
+
+  },
+
   backlogin: function(){
         document.getElementById("login").style.display = "block";
         document.getElementById("signin").style.display = "none";
+        document.getElementById("forgot-password").style.display = "none";
         document.getElementById("grupo").style.display = "none";
         document.getElementById("horarios").style.display = "none";
         document.getElementById("noVerified").style.display = "none";
@@ -208,80 +245,94 @@ var app = {
 
   horario: function() {
     var user = firebase.auth().currentUser;
-    if(!user.emailVerified){
-        document.getElementById("login").style.display = "none";
-        document.getElementById("signin").style.display = "none";
-        document.getElementById("grupo").style.display = "none";
-        document.getElementById("horarios").style.display = "none";
-        document.getElementById("noVerified").style.display = "block";
-        document.getElementById("exit").style.display = "none";
-        document.getElementById("tabla").style.display = "none";
-        document.getElementById("tabla1").style.display = "none";
-        document.getElementById("tabla1").style.display = "none";
-        document.getElementById('tablaAdmin').style.display ='none';
+    var admin = false;
 
-    } else{
-        document.getElementById("bienvenido").innerHTML="Bienvenid@ " + user.displayName ;
-
-        firebase.database().ref('/usuarios/' + user.displayName + '/horarios').once('value').then(function(snapshot) {
-        var horarios = snapshot.val();
-        if(horarios[0] =="" || horarios[0] == undefined) {
-            document.getElementById("dia1").style.display = "none";
+    firebase.database().ref('/usuarios/' + user.displayName + '/admin' ).once('value').then(function(snapshot){
+        if(snapshot.val()){
+                admin = true;
         } else{
-            document.getElementById("dia1").style.display = "block";
-         }
-        document.getElementById("dia1").innerHTML = app.dia(horarios[0]);
-        document.getElementById("dia1").title = app.dia(horarios[0]);
-
-        if(horarios[1] =="" || horarios[1] == undefined) {
-            document.getElementById("dia2").style.display = "none";
-        } else{
-            document.getElementById("dia2").style.display = "block";
+                admin = false;
         }
-        document.getElementById("dia2").innerHTML = app.dia(horarios[1]);
-        document.getElementById("dia2").title = app.dia(horarios[1]);
 
-        if(horarios[2] =="" || horarios[2] == undefined) {
-            document.getElementById("dia3").style.display = "none";
+        if(!user.emailVerified){
+            document.getElementById("login").style.display = "none";
+            document.getElementById("signin").style.display = "none";
+            document.getElementById("forgot-password").style.display = "none";
+            document.getElementById("grupo").style.display = "none";
+            document.getElementById("horarios").style.display = "none";
+            document.getElementById("noVerified").style.display = "block";
+            document.getElementById("exit").style.display = "none";
+            document.getElementById("tabla").style.display = "none";
+            document.getElementById("tabla1").style.display = "none";
+            document.getElementById("tabla1").style.display = "none";
+            document.getElementById('tablaAdmin').style.display ='none';
+
+        } else if (admin) {
+            app.iniciaAdmin()
+            document.getElementById("login").style.display = "none";
+            document.getElementById("signin").style.display = "none";
+            document.getElementById("forgot-password").style.display = "none";
+            document.getElementById("grupo").style.display = "none";
+            document.getElementById("horarios").style.display = "none";
+            document.getElementById("noVerified").style.display = "none";
+            document.getElementById("exit").style.display = "none";
+            document.getElementById("tabla").style.display = "none";
+            document.getElementById("tabla1").style.display = "none";
+            document.getElementById("tabla1").style.display = "none";
+            document.getElementById('tablaAdmin').style.display ='block';
         } else{
-            document.getElementById("dia3").style.display = "block";
-         }
-        document.getElementById("dia3").innerHTML = app.dia(horarios[2]);
-        document.getElementById("dia3").title = app.dia(horarios[2]);
+            document.getElementById("bienvenido").innerHTML="Bienvenid@ " + user.displayName ;
 
-        if(horarios[3] =="" || horarios[3] == undefined) {
-            document.getElementById("dia4").style.display = "none";
-        } else{
-            document.getElementById("dia4").style.display = "block";
-         }
-        document.getElementById("dia4").innerHTML = app.dia(horarios[3]);
-        document.getElementById("dia4").title = app.dia(horarios[4]);
+            firebase.database().ref('/usuarios/' + user.displayName + '/horarios').once('value').then(function(snapshot) {
+            var horarios = snapshot.val();
+
+            if(horarios[0] =="" || horarios[0] == undefined) {
+                document.getElementById("dia1").style.display = "none";
+            } else{
+                document.getElementById("dia1").style.display = "block";
+             }
+            document.getElementById("dia1").innerHTML = app.dia(horarios[0]);
+            document.getElementById("dia1").title = app.dia(horarios[0]);
+
+            if(horarios[1] =="" || horarios[1] == undefined) {
+                document.getElementById("dia2").style.display = "none";
+            } else{
+                document.getElementById("dia2").style.display = "block";
+            }
+            document.getElementById("dia2").innerHTML = app.dia(horarios[1]);
+            document.getElementById("dia2").title = app.dia(horarios[1]);
+
+            if(horarios[2] =="" || horarios[2] == undefined) {
+                document.getElementById("dia3").style.display = "none";
+            } else{
+                document.getElementById("dia3").style.display = "block";
+             }
+            document.getElementById("dia3").innerHTML = app.dia(horarios[2]);
+            document.getElementById("dia3").title = app.dia(horarios[2]);
+
+            if(horarios[3] =="" || horarios[3] == undefined) {
+                document.getElementById("dia4").style.display = "none";
+            } else{
+                document.getElementById("dia4").style.display = "block";
+            }
+            document.getElementById("dia4").innerHTML = app.dia(horarios[3]);
+            document.getElementById("dia4").title = app.dia(horarios[3]);
+
+            });
 
 
-        if(horarios[4] =="" || horarios[4] == undefined) {
-            document.getElementById("dia5").style.display = "none";
-        } else{
-            document.getElementById("dia5").style.display = "block";
-         }
-        document.getElementById("dia5").innerHTML = app.dia(horarios[4]);
-        document.getElementById("dia5").title = app.dia(horarios[4]);
-
-
-
-        });
-
-
-        document.getElementById("login").style.display = "none";
-        document.getElementById("signin").style.display = "none";
-        document.getElementById("grupo").style.display = "none";
-        document.getElementById("horarios").style.display = "block";
-        document.getElementById("noVerified").style.display = "none";
-        document.getElementById("exit").style.display = "none";
-        document.getElementById("tabla").style.display = "none";
-        document.getElementById("tabla1").style.display = "none";
-        document.getElementById("tabla1").style.display = "none";
-        document.getElementById('tablaAdmin').style.display ='none';
-    }
+            document.getElementById("login").style.display = "none";
+            document.getElementById("signin").style.display = "none";
+            document.getElementById("forgot-password").style.display = "none";
+            document.getElementById("grupo").style.display = "none";
+            document.getElementById("horarios").style.display = "block";
+            document.getElementById("noVerified").style.display = "none";
+            document.getElementById("exit").style.display = "none";
+            document.getElementById("tabla").style.display = "none";
+            document.getElementById("tabla1").style.display = "none";
+            document.getElementById('tablaAdmin').style.display ='none';
+        }
+    });
     
   },
 
@@ -309,45 +360,12 @@ var app = {
       return answer;
   },
 
-  link: function(horario,user) {
-    var enlace = "http://pilatesmanzaneque.es/group.php?diahora=" + horario + "&user=" + user;
-    return enlace;
-  },
+
 
   grupo: function(dia){
-    var hora = document.getElementById(dia).innerHTML;
-    var peticion = document.getElementById(dia).title ;
-
-    $.getJSON(peticion,function(data){
-        console.log(JSON.stringify(data));
-
-        $(data).each(function(index,data) {
-          document.getElementById("hora").innerHTML = hora;
-          document.getElementById("plazas").innerHTML = "Quedan " + data.plazas + " plazas.";
-          document.getElementById("mens").innerHTML = data.mens;
-
-          if (data.pert == 1){
-            document.getElementById("pert").innerHTML = "Ya pertenece a este grupo";
-          } else {
-            document.getElementById("pert").innerHTML = "";
-          }
-
-          if (data.plazas <= 0 ) {
-            document.getElementById("add").style.visibility = "hidden";
-          } else {
-            document.getElementById("add").style.visibility = "visible";
-          }
-
-
-        });
-    });
-
-    document.getElementById("horarios").style.display = "none";
-    document.getElementById("grupo").style.display = "block";
-    document.getElementById("exit").style.display = "none";
-    document.getElementById("tabla").style.display = "none";
-    document.getElementById("tabla1").style.display = "none";
-    document.getElementById('tablaAdmin').style.display ='none';
+    var raw = document.getElementById(dia).innerHTML;
+    var hour = app.diahora(raw);
+    app.tabla(hour);
   },
 
   volver: function(){
@@ -361,11 +379,16 @@ var app = {
     firebase.auth().signOut().then(function(){
         window.localStorage.clear();
 
-        document.getElementById("login").style.display = "block";
-        document.getElementById("horarios").style.display = "none";
-        document.getElementById("exit").style.display = "none";
-        document.getElementById("email").value = "";
-        document.getElementById("password").value = "";  
+            document.getElementById("login").style.display = "block";
+            document.getElementById("signin").style.display = "none";
+            document.getElementById("forgot-password").style.display = "none";
+            document.getElementById("grupo").style.display = "none";
+            document.getElementById("horarios").style.display = "none";
+            document.getElementById("noVerified").style.display = "none";
+            document.getElementById("exit").style.display = "none";
+            document.getElementById("tabla").style.display = "none";
+            document.getElementById("tabla1").style.display = "none";
+            document.getElementById('tablaAdmin').style.display ='none';
 
         alert("Ha cerrado sesión correctamente");
     })
@@ -384,12 +407,20 @@ var app = {
     var dia = app.day(hour);
     var hora = app.hora(hour);
     var horarios;
+    var free = false;
 
 
         firebase.database().ref('/usuarios/' + user.displayName +'/horarios').once('value').then(function(snapshot){
             horarios = snapshot.val();
-            if(horarios[4] == ""){
-                for(var i =0; i < 5; i++){
+
+            for (var i = 0; i < 4; i++){
+                if(horarios[i] == ""){
+                    free = true;
+                }
+            }
+
+            if(free){
+                for(var i =0; i < 4; i++){
                     if(horarios[i] == "") {
                         horarios[i] = hour;
                         break;
@@ -420,57 +451,46 @@ var app = {
             }
         });
 
-    /*var user = window.localStorage.getItem("user");
-    var raw = document.getElementById("hora").innerHTML;
-    var hour = app.diahora(raw);
-
-    var peticion = "http://pilatesmanzaneque.es/group.php?diahora="+hour+"&user="+user+"&send=add";
-
-
-       $.getJSON(peticion,function(data){
-        console.log(JSON.stringify(data));
-
-        $(data).each(function(index,data) {
-          document.getElementById("hora").innerHTML = raw;
-          document.getElementById("plazas").innerHTML = "Quedan " + data.plazas + " plazas.";
-          document.getElementById("mens").innerHTML = data.mens;
-
-          if (data.pert == 1){
-            document.getElementById("pert").innerHTML = "Ya pertenece a este grupo";
-          } else {
-            document.getElementById("pert").innerHTML = "";
-          }
-
-
-        });
-    });*/
    },
 
    salir: function() {
-    var user = window.localStorage.getItem("user");
+
+    var user = firebase.auth().currentUser;
+    var plazas = 0;
     var raw = document.getElementById("hora").innerHTML;
     var hour = app.diahora(raw);
+    var dia = app.day(hour);
+    var hora = app.hora(hour);
+    var horarios;
 
-    var peticion = "http://pilatesmanzaneque.es/group.php?diahora="+hour+"&user="+user+"&send=salir";
 
+        firebase.database().ref('/usuarios/' + user.displayName +'/horarios').once('value').then(function(snapshot){
+            horarios = snapshot.val();
+                for(var i =0; i < 4; i++){
+                    if(horarios[i] == hour) {
+                        horarios[i] = "";
+                        break;
+                    }
+                }
 
-       $.getJSON(peticion,function(data){
-        console.log(JSON.stringify(data));
+                firebase.database().ref('/usuarios/' + user.displayName ).update({
+                    horarios: horarios
+                 });
 
-        $(data).each(function(index,data) {
-          document.getElementById("hora").innerHTML = raw;
-          document.getElementById("plazas").innerHTML = "Quedan " + data.plazas + " plazas.";
-          document.getElementById("mens").innerHTML = data.mens;
+                firebase.database().ref('/horarios/'+ dia +'/' + hora + '/plazas').once('value').then(function(snapshot){
+                    plazas = snapshot.val();
 
-          if (data.pert == 1){
-            document.getElementById("pert").innerHTML = "Ya pertenece a este grupo";
-          } else {
-            document.getElementById("pert").innerHTML = "";
-          }
+                    plazas--;
+                 firebase.database().ref('/horarios/' + dia + '/' + hora).update({
+                        plazas: plazas
+                    }); 
 
+                        alert("Ha sido eliminado al grupo");
+
+                        app.tabla(hour);  
+                });
 
         });
-    });
    },
 
 
@@ -486,11 +506,13 @@ var app = {
         var dia = "L";
       } else if(day == "Martes") {
         var dia = "M";
-      } else if(day == "Miércoles") {
+      } else if(day == "Miercoles") {
         var dia = "X";
       } else if(day == "Jueves"){
         var dia = "J";
-      } else {
+      } else if(day == "Viernes") {
+        var dia = "V";
+      }else {
         var dia = "";
       }
 
@@ -546,7 +568,7 @@ var app = {
     document.getElementById("hora").innerHTML= dia + " " + hour;
 
     firebase.database().ref('/horarios/' + dia +'/'+ hour +'/plazas').on('value', function(snapshot){
-        plazas = 10 - snapshot.val();
+        plazas = 12 - snapshot.val();
         document.getElementById("plazas").innerHTML =  "Quedan " + plazas + " plazas";
 
 
@@ -578,73 +600,81 @@ var app = {
 
 
 
-    document.getElementById("horarios").style.display = "none";
-    document.getElementById("grupo").style.display = "block";
-    document.getElementById("exit").style.display = "none";
-    document.getElementById("tabla").style.display = "none";
-    document.getElementById("tabla1").style.display = "none";
-    document.getElementById('tablaAdmin').style.display ='none';
-
-    /*var user = window.localStorage.getItem("user");
-    var peticion = "http://pilatesmanzaneque.es/group.php?diahora=" + hora + "&user=" + user;
-
-    $.getJSON(peticion,function(data){
-        console.log(JSON.stringify(data));
-
-        $(data).each(function(index,data) {
-          document.getElementById("hora").innerHTML = app.dia(hora);
-          document.getElementById("plazas").innerHTML = "Quedan " + data.plazas + " plazas.";
-          document.getElementById("mens").innerHTML = data.mens;
-
-          if (data.pert == 1){
-            document.getElementById("pert").innerHTML = "Ya pertenece a este grupo";
-          } else {
-            document.getElementById("pert").innerHTML = "";
-          }
-
-
-          if (data.plazas <= 0 ) {
-            document.getElementById("add").style.visibility = "hidden";
-          } else 
-            document.getElementById("add").style.visibility = "visible";{
-          }
-
-
-        });
-    });
-
-    document.getElementById("horarios").style.display = "none";
-    document.getElementById("grupo").style.display = "block";
-    document.getElementById("exit").style.display = "none";
-    document.getElementById("tabla").style.display = "none";
-    document.getElementById("tabla1").style.display = "none";
-    document.getElementById('tabla2').style.display ='none';*/
+            document.getElementById("login").style.display = "none";
+            document.getElementById("signin").style.display = "none";
+            document.getElementById("forgot-password").style.display = "none";
+            document.getElementById("grupo").style.display = "block";
+            document.getElementById("horarios").style.display = "none";
+            document.getElementById("noVerified").style.display = "none";
+            document.getElementById("exit").style.display = "none";
+            document.getElementById("tabla").style.display = "none";
+            document.getElementById("tabla1").style.display = "none";
+            document.getElementById('tablaAdmin').style.display ='none';
    },
 
    ver: function() {
     var user = firebase.auth().currentUser;
+    var admin = false;
 
-    if (user){
-        ancho = document.documentElement.clientWidth;
-
-        if (ancho <= 500) {
-            document.getElementById("tabla1").style.display = "block";
-        }else{
-            document.getElementById("tabla").style.display = "block";
+    firebase.database().ref('/usuarios/' + user.displayName + '/admin' ).once('value').then(function(snapshot){
+        if(snapshot.val()){
+                admin = true;
+        } else{
+                admin = false;
         }
-        document.getElementById("horarios").style.display = "none";
-        document.getElementById("grupo").style.display = "none";
-        document.getElementById("exit").style.display = "none";
-      } else {
-        alert('Debe iniciar sesión para ver los horarios');
-      }
+
+        if (user && user.emailVerified){
+
+            if (admin) {
+                app.iniciaAdmin();
+                document.getElementById("login").style.display = "none";
+                document.getElementById("signin").style.display = "none";
+                document.getElementById("forgot-password").style.display = "none";
+                document.getElementById("grupo").style.display = "none";
+                document.getElementById("horarios").style.display = "none";
+                document.getElementById("noVerified").style.display = "none";
+                document.getElementById("exit").style.display = "none";
+                document.getElementById("tabla").style.display = "none";
+                document.getElementById("tabla1").style.display = "none";
+
+                document.getElementById('tablaAdmin').style.display ='block';
+            } else {
+                ancho = document.documentElement.clientWidth;
+
+                if (ancho <= 500) {
+                    document.getElementById("tabla1").style.display = "block";
+                }else{
+                    document.getElementById("tabla").style.display = "block";
+                }
+                document.getElementById("horarios").style.display = "none";
+                document.getElementById("grupo").style.display = "none";
+                document.getElementById("exit").style.display = "none";
+            }
+        } else if (user && !user.emailVerified){
+                document.getElementById("login").style.display = "none";
+                document.getElementById("signin").style.display = "none";
+                document.getElementById("grupo").style.display = "none";
+                document.getElementById("horarios").style.display = "none";
+                document.getElementById("noVerified").style.display = "block";
+                document.getElementById("exit").style.display = "none";
+                document.getElementById("tabla").style.display = "none";
+                document.getElementById("tabla1").style.display = "none";
+                document.getElementById('tablaAdmin').style.display ='none';
+        } else {
+            alert('Debe iniciar sesión para ver los horarios');
+        }
+
+    });
+
+   
    },
 
    cuenta: function(){
         var user = firebase.auth().currentUser;
-        if(!user.emailVerified){
+        if(user && !user.emailVerified ){
             document.getElementById("login").style.display = "none";
             document.getElementById("signin").style.display = "none";
+            document.getElementById("forgot-password").style.display = "none";
             document.getElementById("grupo").style.display = "none";
             document.getElementById("horarios").style.display = "none";
             document.getElementById("noVerified").style.display = "block";
@@ -654,11 +684,12 @@ var app = {
             document.getElementById("tabla1").style.display = "none";
             document.getElementById('tablaAdmin').style.display ='none';
 
-        } else{
+        } else if (user && user.emailVerified){
             document.getElementById("bienvenido").innerHTML="Bienvenid@ " + user.displayName ;
 
             firebase.database().ref('/usuarios/' + user.displayName + '/horarios').once('value').then(function(snapshot) {
             var horarios = snapshot.val();
+
             if(horarios[0] =="" || horarios[0] == undefined) {
                 document.getElementById("dia1").style.display = "none";
             } else{
@@ -689,30 +720,30 @@ var app = {
                 document.getElementById("dia4").style.display = "block";
              }
             document.getElementById("dia4").innerHTML = app.dia(horarios[3]);
-            document.getElementById("dia4").title = app.dia(horarios[4]);
-
-
-            if(horarios[4] =="" || horarios[4] == undefined) {
-                document.getElementById("dia5").style.display = "none";
-            } else{
-                document.getElementById("dia5").style.display = "block";
-             }
-            document.getElementById("dia5").innerHTML = app.dia(horarios[4]);
-            document.getElementById("dia5").title = app.dia(horarios[4]);
-
-
+            document.getElementById("dia4").title = app.dia(horarios[3]);
 
             });
 
 
             document.getElementById("login").style.display = "none";
             document.getElementById("signin").style.display = "none";
+            document.getElementById("forgot-password").style.display = "none";
             document.getElementById("grupo").style.display = "none";
             document.getElementById("horarios").style.display = "block";
             document.getElementById("noVerified").style.display = "none";
             document.getElementById("exit").style.display = "none";
             document.getElementById("tabla").style.display = "none";
             document.getElementById("tabla1").style.display = "none";
+            document.getElementById('tablaAdmin').style.display ='none';
+        } else {
+            document.getElementById("login").style.display = "block";
+            document.getElementById("signin").style.display = "none";
+            document.getElementById("forgot-password").style.display = "none";
+            document.getElementById("grupo").style.display = "none";
+            document.getElementById("horarios").style.display = "none";
+            document.getElementById("noVerified").style.display = "none";
+            document.getElementById("exit").style.display = "none";
+            document.getElementById("tabla").style.display = "none";
             document.getElementById("tabla1").style.display = "none";
             document.getElementById('tablaAdmin').style.display ='none';
         }
@@ -721,7 +752,7 @@ var app = {
    out: function() {
         var user = firebase.auth().currentUser;
 
-      if(user){
+      if(user && user.emailVerified){
                 document.getElementById("login").style.display = "none";
                 document.getElementById("grupo").style.display = "none";
                 document.getElementById("horarios").style.display = "none";
@@ -730,33 +761,70 @@ var app = {
                 document.getElementById("tabla1").style.display = "none";
                 document.getElementById("tabla1").style.display = "none";
                 document.getElementById('tablaAdmin').style.display ='none';
+      } else if (user && !user.emailVerified){
+            document.getElementById("login").style.display = "none";
+            document.getElementById("signin").style.display = "none";
+            document.getElementById("grupo").style.display = "none";
+            document.getElementById("horarios").style.display = "none";
+            document.getElementById("noVerified").style.display = "block";
+            document.getElementById("exit").style.display = "none";
+            document.getElementById("tabla").style.display = "none";
+            document.getElementById("tabla1").style.display = "none";
+            document.getElementById('tablaAdmin').style.display ='none';
       } else {
         alert("No ha iniciado sesión");
       }
    },
 
-   siguiente: function() {
-      document.getElementById('tabla1').style.display ='none';
-      document.getElementById('tablaAdmin').style.display ='block';
+   iniciaAdmin: function(){
+       
+        firebase.database().ref('/horarios/Lunes').once('value', function(snapshot) {
+            snapshot.forEach(function(childSnapshot){
+                var hora = childSnapshot.key;
+                var plazas = childSnapshot.val().plazas;
+                document.getElementById("Lunes"+hora).innerHTML = plazas;
+
+            });
+        }); 
+
+        firebase.database().ref('/horarios/Martes').once('value', function(snapshot) {
+            snapshot.forEach(function(childSnapshot){
+                var hora = childSnapshot.key;
+                var plazas = childSnapshot.val().plazas;
+                document.getElementById("Martes"+hora).innerHTML = plazas;
+
+            });
+        }); 
+
+        firebase.database().ref('/horarios/Miercoles').once('value', function(snapshot) {
+            snapshot.forEach(function(childSnapshot){
+                var hora = childSnapshot.key;
+                var plazas = childSnapshot.val().plazas;
+                document.getElementById("Miercoles"+hora).innerHTML = plazas;
+
+            });
+        }); 
+
+        firebase.database().ref('/horarios/Jueves').once('value', function(snapshot) {
+            snapshot.forEach(function(childSnapshot){
+                var hora = childSnapshot.key;
+                var plazas = childSnapshot.val().plazas;
+                document.getElementById("Jueves"+hora).innerHTML = plazas;
+
+            });
+        }); 
+
+        firebase.database().ref('/horarios/Viernes').once('value', function(snapshot) {
+            snapshot.forEach(function(childSnapshot){
+                var hora = childSnapshot.key;
+                var plazas = childSnapshot.val().plazas;
+                document.getElementById("Viernes"+hora).innerHTML = plazas;
+
+            });
+        }); 
+
+
    },
-
-   anterior: function() {
-    document.getElementById('tabla1').style.display ='block';
-    document.getElementById('tablaAdmin').style.display ='none';
-   },
-
-   /*rotacion: function () {
-    var ancho = document.documentElement.clientWidth;
-    var header = document.getElementById("header").className;
-
-    if (ancho <=500 && header == "header") {
-      document.getElementById("header").className = "header-big";
-    } else if (ancho <= 500 && header == "header-big")  {
-      document.getElementById("header").className= "header";
-    }
-
-
-   }*/
 
 };
 
@@ -774,65 +842,3 @@ document.addEventListener("backbutton", function(){
   app.volver();
 }, false);
 
-
-
-
-/*var app = {
-    // Application Constructor
-    initialize: function() {
-        var config = {
-            apiKey: "AIzaSyDMHf0OfkaNIdtfFdAwHnJjzfEqbEs-TYk",
-            authDomain: "la-nave-31b28.firebaseapp.com",
-            databaseURL: "https://la-nave-31b28.firebaseio.com",
-            projectId: "la-nave-31b28",
-            storageBucket: "la-nave-31b28.appspot.com",
-            messagingSenderId: "160630566772"
-         };
-        firebase.initializeApp(config);
-
-        this.readData();
-    },
-
-
-    readData: function(){
-        firebase.database().ref('horarios/lunes/08:00/plazas').on('value', function(snapshot){
-            var plazas = 10 - snapshot.val();
-            document.getElementById("plazas").innerHTML =  "Número de plazas: " + plazas;
-        });
-    },
-
-    add: function(time) {
-        var plazas = 0;
-        firebase.database().ref('horarios/lunes/' + time +'/plazas').once('value').then(function(snapshot){
-            plazas = snapshot.val();
-
-            if(plazas < 10) {
-            plazas++;
-
-            firebase.database().ref('horarios/lunes/' + time).update({
-                plazas: plazas
-            });
-            } else {
-                alert("Grupo Completo");
-            }
-        });
-    },
-
-    exit: function(time) {
-        var plazas = 0;
-        firebase.database().ref('horarios/lunes/' + time + '/plazas').once('value').then(function(snapshot){
-            plazas = snapshot.val();
-
-            if(plazas > 0) {
-            plazas--;
-
-            firebase.database().ref('horarios/lunes/' + time).update({
-                plazas: plazas
-            });
-            } else {
-                alert("Grupo Vacío");
-            }
-        });
-    }
-
-};*/

@@ -1,12 +1,17 @@
 
 .login {
 	display: none;
-	padding-left: 15px;
+	padding: 15px;
 }
 
 .signin {
 	display: none;
-	padding-left: 15px;
+	padding: 15px;
+}
+
+.forgot {
+	display: none;
+	padding: 15px;	
 }
 
 .entrar {
@@ -62,6 +67,15 @@
 	display: none;
 }
 
+.tablaAdmin td {
+	text-align: center;
+	color: blue;
+}
+
+.negro{
+	color: black!important;
+}
+
 .brand-logo {
 	font-size: 25px!important;
 	
@@ -106,5 +120,11 @@
 
 .collection-item{
 	display: none;
+}
+
+.responsive {
+	width: 100%;
+    height: 400px;
+    overflow:auto;
 }
 
