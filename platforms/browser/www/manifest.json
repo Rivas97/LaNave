@@ -1,9 +1,9 @@
 {
   "background_color": "#FFF",
   "display": "standalone",
-  "name": "Training",
-  "short_name": "Training",
-  "version": "Nave",
+  "name": "La Nave Training",
+  "short_name": "La Nave Training",
+  "version": "com.LaNave.LaNave",
   "description": "Hello World sample application that responds to the deviceready event.",
   "author": "PhoneGap Team",
   "icons": [],

@@ -13,9 +13,6 @@
     "cordova-plugin-camera": {
       "PACKAGE_NAME": "Nave"
     },
-    "cordova-plugin-media-capture": {
-      "PACKAGE_NAME": "Nave"
-    },
     "cordova-plugin-device": {
       "PACKAGE_NAME": "Nave"
     },
@@ -52,9 +49,6 @@
   },
   "dependent_plugins": {
     "cordova-plugin-compat": {
-      "PACKAGE_NAME": "Nave"
-    },
-    "cordova-plugin-file": {
       "PACKAGE_NAME": "Nave"
     }
   }
