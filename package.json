@@ -1,7 +1,7 @@
 {
-  "name": "nave",
+  "name": "com.LaNave.LaNave",
   "version": "1.0.0",
-  "displayName": "Training",
+  "displayName": "La Nave Training",
   "cordova": {
     "platforms": [
       "ios"
@@ -25,6 +25,7 @@
     }
   },
   "dependencies": {
+    "cordova-android": "^7.0.0",
     "cordova-ios": "~4.5.5",
     "cordova-plugin-battery-status": "~1.2.4",
     "cordova-plugin-browsertab": "~0.2.0",
